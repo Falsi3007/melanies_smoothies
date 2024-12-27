@@ -26,6 +26,8 @@ ingredients_list = st.multiselect(
     max_selections = 5
 )
 
+st.dataframe(ingredients_list)
+
 if ingredients_list:
     # st.write(ingredients_list)
     # st.text(ingredients_list)
