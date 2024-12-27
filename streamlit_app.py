@@ -25,9 +25,6 @@ ingredients_list = st.multiselect(
     max_selections = 5
 )
 
-my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
-            values ('""" + ingredients_string + """','""" + name_on_order + """')"""
-
 if ingredients_list:
     # st.write(ingredients_list)
     # st.text(ingredients_list)
@@ -39,8 +36,8 @@ if ingredients_list:
 
     # st.write(ingredients_string)
 
-# my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
-            # values ('""" + ingredients_string + """','""" + name_on_order + """')"""
+my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
+            values ('""" + ingredients_string + """','""" + name_on_order + """')"""
  
     
 # st.write(my_insert_stmt)
