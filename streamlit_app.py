@@ -16,14 +16,13 @@ cnx =  st.connection("snowflake")
 session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('SEARCH_ON'))
 
+# Convert the Snowflake table to a Pandas DataFrame
 pd_pf = my_dataframe.to_pandas()
-# st.dataframe(pd_pf)
-# st.stop()
 
 # Multiselect widget for ingredients
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
-    my_dataframe,
+    pd_pf['FRUIT_NAME'].tolist(),  # Convert FRUIT_NAME column to list
     max_selections=5
 )
 
@@ -31,15 +30,20 @@ ingredients_list = st.multiselect(
 ingredients_string = ''
 
 if ingredients_list:
-    # Construct the ingredients string from the selected fruits
+    # Construct the ingredients string and fetch `SEARCH_ON` values
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
-        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-        st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
+        search_on = pd_pf.loc[pd_pf['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+        st.write(f"The search value for {fruit_chosen} is {search_on}.")
 
-        st.subheader(fruit_chosen + 'Nutrition Information')
+        # Fetch nutrition information from API
+        st.subheader(f"{fruit_chosen} Nutrition Information")
         smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
-        sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width = True)
+        if smoothiefroot_response.status_code == 200:
+            st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        else:
+            st.error(f"Could not fetch data for {search_on}. API responded with {smoothiefroot_response.status_code}.")
+
 
 # Construct the SQL insert statement
 my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
