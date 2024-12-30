@@ -33,7 +33,7 @@ if ingredients_list:
     # Construct the ingredients string and fetch `SEARCH_ON` values
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
-        st.dataframe(pd_pf)
+        # st.dataframe(pd_pf)
         search_on = pd_pf.loc[pd_pf['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
         st.write(f"The search value for {fruit_chosen} is {search_on}.")
 
